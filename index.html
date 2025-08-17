@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header/Navigation -->
+        <header class="header">
+            <div class="container">
+                <div class="header__content">
+                    <h1 class="header__title">💰 Expense Tracker</h1>
+                    <nav class="nav">
+                        <button class="nav__item nav__item--active" data-section="dashboard">
+                            📊 Dashboard
+                        </button>
+                        <button class="nav__item" data-section="add-expense">
+                            ➕ Add Expense
+                        </button>
+                        <button class="nav__item" data-section="expenses">
+                            📋 All Expenses
+                        </button>
+                        <button class="nav__item" data-section="budget">
+                            🎯 Budget
+                        </button>
+                        <button class="nav__item" data-section="categories">
+                            📁 Categories
+                        </button>
+                    </nav>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                        🌙
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section section--active">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">Financial Overview</h2>
+                    <p class="section__subtitle">Track your spending and manage your budget</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="card stats-card">
+                        <div class="stats-card__content">
+                            <div class="stats-card__value" id="totalExpensesMonth">₹0.00</div>
+                            <div class="stats-card__label">This Month</div>
+                        </div>
+                        <div class="stats-card__icon">💳</div>
+                    </div>
+                    <div class="card stats-card">
+                        <div class="stats-card__content">
+                            <div class="stats-card__value" id="budgetRemaining">₹0.00</div>
+                            <div class="stats-card__label">Budget Remaining</div>
+                        </div>
+                        <div class="stats-card__icon">🎯</div>
+                    </div>
+                    <div class="card stats-card">
+                        <div class="stats-card__content">
+                            <div class="stats-card__value" id="totalExpensesWeek">₹0.00</div>
+                            <div class="stats-card__label">This Week</div>
+                        </div>
+                        <div class="stats-card__icon">📅</div>
+                    </div>
+                    <div class="card stats-card">
+                        <div class="stats-card__content">
+                            <div class="stats-card__value" id="totalExpenses">₹0.00</div>
+                            <div class="stats-card__label">Total Expenses</div>
+                        </div>
+                        <div class="stats-card__icon">💰</div>
+                    </div>
+                </div>
+
+                <!-- Budget Progress -->
+                <div class="card" id="budgetCard">
+                    <div class="card__body">
+                        <h3>Monthly Budget Progress</h3>
+                        <div class="budget-progress">
+                            <div class="budget-progress__bar">
+                                <div class="budget-progress__fill" id="budgetFill"></div>
+                            </div>
+                            <div class="budget-progress__info">
+                                <span id="budgetSpent">₹0</span> of <span id="budgetTotal">₹0</span> spent
+                                (<span id="budgetPercentage">0%</span>)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Recent Transactions -->
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Recent Transactions</h3>
+                            <button class="btn btn--sm btn--outline" onclick="showSection('expenses')">View All</button>
+                        </div>
+                        <div class="card__body">
+                            <div id="recentTransactions" class="expense-list">
+                                <!-- Recent transactions will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Breakdown -->
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Category Breakdown</h3>
+                            <button class="btn btn--sm btn--outline" onclick="showSection('categories')">View Details</button>
+                        </div>
+                        <div class="card__body">
+                            <div id="categoryBreakdown" class="category-breakdown">
+                                <!-- Category breakdown will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Add Button -->
+                <button class="fab" onclick="showSection('add-expense')" aria-label="Add new expense">
+                    ➕
+                </button>
+            </div>
+        </section>
+
+        <!-- Add Expense Section -->
+        <section id="add-expense" class="section">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">Add New Expense</h2>
+                    <p class="section__subtitle">Record your spending</p>
+                </div>
+
+                <div class="form-container">
+                    <form id="expenseForm" class="expense-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="amount" class="form-label">Amount *</label>
+                                <input type="number" id="amount" name="amount" class="form-control" 
+                                       placeholder="0.00" step="0.01" min="0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category" class="form-label">Category *</label>
+                                <select id="category" name="category" class="form-control" required>
+                                    <option value="">Select category</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group form-group--full">
+                                <label for="description" class="form-label">Description</label>
+                                <input type="text" id="description" name="description" class="form-control" 
+                                       placeholder="What was this expense for?">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="date" class="form-label">Date *</label>
+                                <input type="date" id="date" name="date" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn--secondary" id="cancelExpense">Cancel</button>
+                            <button type="submit" class="btn btn--primary">
+                                <span id="submitBtnText">Add Expense</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="alert alert--success hidden">
+                    <strong>Success!</strong> Expense added successfully.
+                    <button class="btn btn--sm btn--outline" id="addAnother">Add Another</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- All Expenses Section -->
+        <section id="expenses" class="section">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">All Expenses</h2>
+                    <p class="section__subtitle">View and manage your expenses</p>
+                </div>
+
+                <!-- Filters and Controls -->
+                <div class="card">
+                    <div class="card__body">
+                        <div class="filters-grid">
+                            <div class="form-group">
+                                <label for="searchExpenses" class="form-label">Search</label>
+                                <input type="text" id="searchExpenses" class="form-control" 
+                                       placeholder="Search by description...">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="filterCategory" class="form-label">Filter by Category</label>
+                                <select id="filterCategory" class="form-control">
+                                    <option value="">All categories</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sortBy" class="form-label">Sort by</label>
+                                <select id="sortBy" class="form-control">
+                                    <option value="date-desc">Date (Newest first)</option>
+                                    <option value="date-asc">Date (Oldest first)</option>
+                                    <option value="amount-desc">Amount (High to Low)</option>
+                                    <option value="amount-asc">Amount (Low to High)</option>
+                                    <option value="category">Category</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn--outline" id="clearFilters">Clear Filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expenses List -->
+                <div class="card">
+                    <div class="card__body">
+                        <div id="expensesList" class="expenses-list">
+                            <!-- Expenses will be populated by JavaScript -->
+                        </div>
+
+                        <div id="noExpenses" class="no-data hidden">
+                            <div class="no-data__icon">📋</div>
+                            <h3 class="no-data__title">No expenses found</h3>
+                            <p class="no-data__description">Start tracking by adding your first expense</p>
+                            <button class="btn btn--primary" onclick="showSection('add-expense')">Add Expense</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Budget Section -->
+        <section id="budget" class="section">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">Budget Management</h2>
+                    <p class="section__subtitle">Set and track your monthly budget</p>
+                </div>
+
+                <div class="budget-grid">
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Set Monthly Budget</h3>
+                        </div>
+                        <div class="card__body">
+                            <form id="budgetForm">
+                                <div class="form-group">
+                                    <label for="monthlyBudget" class="form-label">Monthly Budget Amount</label>
+                                    <input type="number" id="monthlyBudget" class="form-control" 
+                                           placeholder="1500.00" step="0.01" min="0">
+                                </div>
+                                <button type="submit" class="btn btn--primary btn--full-width">Update Budget</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Budget vs Spending</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="budget-comparison">
+                                <div class="budget-item">
+                                    <div class="budget-item__label">Budget</div>
+                                    <div class="budget-item__value" id="budgetAmount">₹0.00</div>
+                                </div>
+                                <div class="budget-item">
+                                    <div class="budget-item__label">Spent</div>
+                                    <div class="budget-item__value" id="spentAmount">₹0.00</div>
+                                </div>
+                                <div class="budget-item">
+                                    <div class="budget-item__label">Remaining</div>
+                                    <div class="budget-item__value" id="remainingAmount">₹0.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="section">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">Spending by Categories</h2>
+                    <p class="section__subtitle">Analyze your spending patterns</p>
+                </div>
+
+                <div id="categoriesGrid" class="categories-grid">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Edit Expense Modal -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title">Edit Expense</h3>
+                <button class="modal__close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal__body">
+                <form id="editExpenseForm">
+                    <input type="hidden" id="editExpenseId">
+                    <div class="form-group">
+                        <label for="editAmount" class="form-label">Amount *</label>
+                        <input type="number" id="editAmount" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCategory" class="form-label">Category *</label>
+                        <select id="editCategory" class="form-control" required>
+                            <option value="">Select category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDescription" class="form-label">Description</label>
+                        <input type="text" id="editDescription" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editDate" class="form-label">Date *</label>
+                        <input type="date" id="editDate" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" id="cancelEdit">Cancel</button>
+                <button class="btn btn--primary" id="saveEdit">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
